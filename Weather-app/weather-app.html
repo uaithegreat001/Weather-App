@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./weather.css" />
+  <title>Weather App</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+<body>
+  <div class="weather-card">
+    <div class="search-menu">
+      <input type="search" id="searchInput" placeholder="Enter city name" />
+      <span class="material-symbols-outlined" id="searchBtn">search</span>
+    </div>
+    <div class="city-card">
+      <h2 class="city">Weather in Denver</h2>
+      <h2 class="temp">51°C</h2>
+    </div>
+    <div class="second-card">
+      <p class="discrition">Cloudy</p>
+      <p class="humidity">Humidity: 60%</p>
+      <p class="wind">Wind speed 6.2 km/h</p>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "aa4b1374220d6b99b008b2ccf0c85ba9";
+
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+
+    const cityElement = document.querySelector(".city");
+    const tempElement = document.querySelector(".temp");
+    const descElement = document.querySelector(".discrition");
+    const humidityElement = document.querySelector(".humidity");
+    const windElement = document.querySelector(".wind");
+
+    function getWeather(city) {
+      const url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+
+      fetch(url)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (data.cod === "404") {
+            alert("City not found");
+            return;
+          }
+
+          cityElement.textContent = "Weather in " + data.name;
+          tempElement.textContent = Math.round(data.main.temp) + "°C";
+          descElement.textContent = data.weather[0].description;
+          humidityElement.textContent = "Humidity: " + data.main.humidity + "%";
+          windElement.textContent = "Wind speed: " + data.wind.speed + " km/h";
+        });
+    }
+
+    searchBtn.addEventListener("click", function () {
+      const city = searchInput.value.trim();
+      if (city !== "") {
+        getWeather(city);
+      }
+    });
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        searchBtn.click();
+      }
+    });
+
+    // Show default weather on load
+    getWeather("Denver");
+  </script>
+</body>
+</html>
+
